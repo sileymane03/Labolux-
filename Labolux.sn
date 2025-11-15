@@ -1,0 +1,350 @@
+import React, { useState, useEffect } from "react";
+
+/*
+  LABOLUX - Prototype e‑commerce (React + Tailwind)
+  Personnalisation :
+    - Nom du propriétaire : Sùleęïmãn Âdâm
+    - Contact : 783521039
+    - Produits : Montres, lunettes, chaussures, accessoires de luxe
+*/
+
+const PRODUITS_EXEMPLES = [
+  { id: "p1", titre: "Montre LABOLUX Chrono", prix: 249.99, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1200&q=80", tags: ["montre", "luxe"], desc: "Montre élégante en acier inoxydable, design moderne et chic." },
+  { id: "p2", titre: "Lunettes LABOLUX Vision", prix: 129.5, img: "https://images.unsplash.com/photo-1542144582-1ba0047b5b4f?w=1200&q=80", tags: ["lunettes", "style"], desc: "Lunettes de soleil design avec protection UV optimale." },
+  { id: "p3", titre: "Chaussures LABOLUX Elite", prix: 199.0, img: "https://images.unsplash.com/photo-1589820296150-3f3a6c0f01d8?w=1200&q=80", tags: ["chaussures", "luxe"], desc: "Chaussures en cuir de qualité supérieure pour un confort maximal." },
+  { id: "p4", titre: "Sac LABOLUX Prestige", prix: 179.99, img: "https://images.unsplash.com/photo-1562158070-622bd2bb9112?w=1200&q=80", tags: ["accessoire", "luxe"], desc: "Sac en cuir élégant, parfait pour toutes les occasions." }
+];
+
+// Fonction d'aide pour le formatage de la devise
+function formatMonnaie(montant) { return montant.toLocaleString("fr-FR", { style: "currency", currency: "EUR" }); }
+
+// ----------------------------------------------------------------------
+// Composant principal de l'application
+// ----------------------------------------------------------------------
+
+export default function LABOLUXApp() {
+  const [produits] = useState(PRODUITS_EXEMPLES);
+  const [recherche, setRecherche] = useState("");
+  const [selectionne, setSelectionne] = useState(null); // non utilisé
+  const [panier, setPanier] = useState([]);
+  const [panierOuvert, setPanierOuvert] = useState(false);
+  const [theme, setTheme] = useState("clair");
+
+  // Effet pour basculer la classe 'dark' sur l'élément HTML racine
+  useEffect(() => { document.documentElement.classList.toggle('dark', theme === 'sombre'); }, [theme]);
+
+  // Logique du panier
+  function ajouterAuPanier(produit, quantite = 1) {
+    setPanier(prev => {
+      const trouve = prev.find(p => p.id === produit.id);
+      if (trouve) return prev.map(p => p.id === produit.id ? { ...p, qty: p.qty + quantite } : p);
+      return [...prev, { ...produit, qty: quantite }];
+    });
+    setPanierOuvert(true);
+  }
+
+  function modifierQuantite(id, quantite) { setPanier(prev => prev.map(p => p.id === id ? { ...p, qty: Math.max(1, quantite) } : p)); }
+  function supprimerDuPanier(id) { setPanier(prev => prev.filter(p => p.id !== id)); }
+  function totalPanier() { return panier.reduce((s, p) => s + p.prix * p.qty, 0); }
+
+  // Logique de filtrage des produits
+  const filtres = produits.filter(p => 
+    p.titre.toLowerCase().includes(recherche.toLowerCase()) || 
+    p.tags.join(' ').toLowerCase().includes(recherche.toLowerCase())
+  );
+
+  // Paiement simulé
+  function paiementSimule() {
+    if (panier.length === 0) return alert('Le panier est vide.');
+    alert(`Paiement simulé réussi pour un total de ${formatMonnaie(totalPanier())} — merci pour votre commande !`);
+    setPanier([]);
+    setPanierOuvert(false);
+  }
+
+  // Fonction de téléchargement HTML statique (inchangée)
+  function telechargerHTML() {
+    const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>LABOLUX - Boutique</title></head><body style="font-family:Arial, sans-serif;margin:0;padding:20px;background:#f7f7fb"><header><h1 style="color:#4f46e5">LABOLUX</h1><p>Design • Confort • Luxe</p><p>Propriétaire: Sùleęïmãn Âdâm | Contact: 783521039</p></header><main>${produits.map(p => `<div style="border:1px solid #ccc;padding:16px;margin-bottom:12px;border-radius:6px;background:#fff"><img src='${p.img}' alt='${p.titre}' style='width:100%;height:200px;object-fit:cover;border-radius:4px'/><h3>${p.titre}</h3><p>${p.desc}</p><strong>${formatMonnaie(p.prix)}</strong></div>`).join('')}</main><footer style="margin-top:24px;color:#666">© ${new Date().getFullYear()} LABOLUX</footer></body></html>`;
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'labolux-static.html';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ----------------------------------------------------------------------
+  // Rendu de l'application
+  // ----------------------------------------------------------------------
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 transition-colors">
+      
+      {/* HEADER */}
+      <header className="sticky top-0 z-30 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md shadow-md">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-tr from-indigo-600 to-pink-500 text-white font-extrabold flex items-center justify-center text-2xl">L</div>
+            <div>
+              <div className="text-lg font-bold">LABOLUX</div>
+              <div className="text-sm text-gray-500 dark:text-gray-300">Design • Confort • Luxe</div>
+              <div className="text-xs text-gray-400">Propriétaire: Sùleęïmãn Âdâm | Contact: 783521039</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <input 
+              value={recherche} 
+              onChange={e => setRecherche(e.target.value)} 
+              className="px-3 py-2 rounded-md border bg-white/60 dark:bg-gray-800/60 focus:ring-indigo-500 focus:border-indigo-500 transition" 
+              placeholder="Rechercher (Montres, Luxe...)" 
+            />
+            <button 
+              onClick={() => setTheme(t => t === 'clair' ? 'sombre' : 'clair')} 
+              className="px-3 py-2 border rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              aria-label="Basculer le thème"
+            >
+              {theme === 'clair' ? '🌑 Sombre' : '☀️ Clair'}
+            </button>
+            <button 
+              onClick={telechargerHTML} 
+              className="px-3 py-2 border rounded-md bg-green-500 text-white hover:bg-green-600 transition"
+            >
+              Télécharger HTML
+            </button>
+            <button 
+              onClick={() => setPanierOuvert(v => !v)} 
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition relative"
+            >
+              Panier 
+              {panier.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-pink-500 text-xs text-white rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  {panier.reduce((s, p) => s + p.qty, 0)}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* MAIN CONTENT */}
+      <main className="max-w-7xl mx-auto px-4 py-12">
+        {/* HERO SECTION */}
+        <div className="grid md:grid-cols-2 gap-8 items-center mb-16">
+          <div>
+            <h2 className="text-5xl font-extrabold leading-tight tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-pink-500">
+              LABOLUX — Collection exclusive
+            </h2>
+            <p className="mt-4 text-xl text-gray-600 dark:text-gray-300">
+              Découvrez notre sélection exclusive de **{produits.length} produits** pour un style unique et raffiné.
+            </p>
+          </div>
+          <div className="rounded-xl overflow-hidden shadow-2xl transform hover:scale-[1.01] transition duration-300">
+            <img src={produits[0].img} alt="Collection d'accessoires de luxe" className="w-full h-80 object-cover" />
+          </div>
+        </div>
+        
+        {/* PRODUITS LIST */}
+        <ListeProduits produits={filtres} ajouterAuPanier={ajouterAuPanier} recherche={recherche} />
+      </main>
+
+      {/* PANIER SLIDE-OVER */}
+      <PanierLateral 
+        panier={panier} 
+        ouvert={panierOuvert} 
+        fermer={() => setPanierOuvert(false)} 
+        modifierQuantite={modifierQuantite}
+        supprimerDuPanier={supprimerDuPanier}
+        totalPanier={totalPanier}
+        paiementSimule={paiementSimule}
+      />
+    </div>
+  );
+}
+
+// ----------------------------------------------------------------------
+// Composant : Liste des produits
+// ----------------------------------------------------------------------
+
+function ListeProduits({ produits, ajouterAuPanier, recherche }) {
+  return (
+    <section>
+      <h3 className="text-3xl font-bold mb-8">
+        {recherche ? `Résultats pour "${recherche}"` : "Tous les produits"} ({produits.length})
+      </h3>
+      
+      {produits.length === 0 ? (
+        <div className="text-center py-10 border border-dashed rounded-lg text-gray-500 dark:text-gray-400">
+          Aucun produit ne correspond à votre recherche.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {produits.map(produit => (
+            <div key={produit.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden flex flex-col">
+              <img src={produit.img} alt={produit.titre} className="w-full h-48 object-cover" />
+              <div className="p-5 flex flex-col flex-grow">
+                <h4 className="text-xl font-semibold mb-2 flex-grow">{produit.titre}</h4>
+                <p className="text-gray-600 dark:text-gray-400 text-sm mb-3 line-clamp-2">{produit.desc}</p>
+                <div className="flex justify-between items-center mt-auto pt-3 border-t border-gray-100 dark:border-gray-700">
+                  <span className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">
+                    {formatMonnaie(produit.prix)}
+                  </span>
+                  <button
+                    onClick={() => ajouterAuPanier(produit)}
+                    className="px-4 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition transform hover:scale-[1.05]"
+                  >
+                    Ajouter
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+// ----------------------------------------------------------------------
+// Composant : Panier latéral (Slide-over)
+// ----------------------------------------------------------------------
+
+function PanierLateral({ panier, ouvert, fermer, modifierQuantite, supprimerDuPanier, totalPanier, paiementSimule }) {
+  
+  const totalItems = panier.reduce((s, p) => s + p.qty, 0);
+
+  return (
+    <div 
+      className={`fixed inset-0 z-40 overflow-hidden transition-opacity duration-300 ${
+        ouvert ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+      }`}
+    >
+      {/* Overlay sombre (ferme au clic) */}
+      <div 
+        className="absolute inset-0 bg-gray-600 bg-opacity-75"
+        onClick={fermer}
+      ></div>
+
+      {/* Panneau du panier */}
+      <div 
+        className={`fixed inset-y-0 right-0 max-w-full flex transition-transform duration-300 ease-in-out ${
+          ouvert ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="w-screen max-w-md">
+          <div className="h-full flex flex-col bg-white dark:bg-gray-800 shadow-xl">
+            
+            {/* Header du panier */}
+            <div className="px-4 py-6 sm:px-6 border-b dark:border-gray-700">
+              <div className="flex items-start justify-between">
+                <h2 className="text-2xl font-bold">Votre Panier</h2>
+                <div className="ml-3 flex h-7 items-center">
+                  <button
+                    type="button"
+                    className="-m-2 p-2 text-gray-400 hover:text-gray-500"
+                    onClick={fermer}
+                  >
+                    <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Vous avez {totalItems} {totalItems > 1 ? 'articles' : 'article'}.</p>
+            </div>
+
+            {/* Corps du panier (liste des articles) */}
+            <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+              <div className="flow-root">
+                {panier.length === 0 ? (
+                  <p className="text-center py-8 text-gray-500 dark:text-gray-400">Le panier est vide. Ajoutez des produits LABOLUX !</p>
+                ) : (
+                  <ul role="list" className="-my-6 divide-y divide-gray-200 dark:divide-gray-700">
+                    {panier.map(produit => (
+                      <li key={produit.id} className="flex py-6">
+                        <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
+                          <img
+                            src={produit.img}
+                            alt={produit.titre}
+                            className="h-full w-full object-cover object-center"
+                          />
+                        </div>
+
+                        <div className="ml-4 flex flex-1 flex-col">
+                          <div>
+                            <div className="flex justify-between text-base font-medium">
+                              <h3>{produit.titre}</h3>
+                              <p className="ml-4">{formatMonnaie(produit.prix * produit.qty)}</p>
+                            </div>
+                            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{formatMonnaie(produit.prix)} / pièce</p>
+                          </div>
+                          <div className="flex flex-1 items-end justify-between text-sm">
+                            <div className="flex items-center space-x-2">
+                                <label htmlFor={`qty-${produit.id}`} className="text-gray-500 dark:text-gray-400">Qté</label>
+                                <input
+                                    id={`qty-${produit.id}`}
+                                    type="number"
+                                    min="1"
+                                    value={produit.qty}
+                                    onChange={(e) => modifierQuantite(produit.id, parseInt(e.target.value))}
+                                    className="w-14 px-2 py-1 border rounded-md text-center bg-gray-100 dark:bg-gray-700"
+                                />
+                            </div>
+
+                            <div className="flex">
+                              <button
+                                type="button"
+                                onClick={() => supprimerDuPanier(produit.id)}
+                                className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+                              >
+                                Supprimer
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+
+            {/* Footer du panier (total et paiement) */}
+            <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-6 sm:px-6">
+              <div className="flex justify-between text-base font-medium">
+                <p>Sous-total</p>
+                <p className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">{formatMonnaie(totalPanier())}</p>
+              </div>
+              <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400">Les frais de port et taxes sont calculés à la caisse.</p>
+              <div className="mt-6">
+                <button
+                  onClick={paiementSimule}
+                  disabled={panier.length === 0}
+                  className={`w-full flex items-center justify-center rounded-md border border-transparent px-6 py-3 text-base font-medium shadow-sm transition ${
+                    panier.length === 0
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                  }`}
+                >
+                  Paiement Simulé
+                </button>
+              </div>
+              <div className="mt-6 flex justify-center text-center text-sm text-gray-500 dark:text-gray-400">
+                <p>
+                  ou{' '}
+                  <button
+                    type="button"
+                    className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400"
+                    onClick={fermer}
+                  >
+                    Continuer vos achats
+                    <span aria-hidden="true"> &rarr;</span>
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
