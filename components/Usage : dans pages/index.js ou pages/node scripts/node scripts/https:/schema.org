@@ -1,0 +1,11 @@
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "LABOLUX",
+    "url": "https://labolux.vercel.app",
+    "logo": "https://labolux.vercel.app/images/logo.png",
+    "sameAs": ["https://facebook.com/tonpage", "https://instagram.com/tonpage"]
+  })}}
+/>
