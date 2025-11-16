@@ -1,0 +1,65 @@
+import Layout from '../components/Layout'
+import Seo from '../components/Seo'
+import Image from 'next/image'
+import Link from 'next/link'
+
+export default function Home() {
+  return (
+    <Layout>
+      <Seo title="Accueil" description="Découvrez les montres, lunettes et accessoires LABOLUX au Sénégal" />
+
+      {/* Hero */}
+      <section className="relative h-[60vh] bg-gray-100 flex items-center justify-center">
+        <Image
+          src="/images/hero-watch.jpg"
+          alt="Montre LABOLUX"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute text-center text-white">
+          <h1 className="text-4xl md:text-6xl font-bold drop-shadow-lg">LABOLUX</h1>
+          <p className="mt-4 text-xl md:text-2xl drop-shadow-lg">Montres • Lunettes • Accessoires téléphones</p>
+          <Link href="/boutique" className="mt-6 inline-block bg-yellow-400 text-black px-6 py-3 font-semibold rounded hover:bg-yellow-500">Découvrir la boutique</Link>
+        </div>
+      </section>
+
+      {/* Catégories */}
+      <section className="my-16 text-center">
+        <h2 className="text-3xl font-bold mb-8">Nos catégories</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 px-4">
+          <Link href="/boutique#montres" className="p-4 border rounded hover:shadow-lg">🕒 Montres</Link>
+          <Link href="/boutique#lunettes" className="p-4 border rounded hover:shadow-lg">👓 Lunettes</Link>
+          <Link href="/boutique#casquettes" className="p-4 border rounded hover:shadow-lg">🧢 Casquettes</Link>
+          <Link href="/boutique#accessoires" className="p-4 border rounded hover:shadow-lg">📱 Accessoires téléphones</Link>
+        </div>
+      </section>
+
+      {/* Produits phares */}
+      <section className="my-16 px-4">
+        <h2 className="text-3xl font-bold text-center mb-8">Nos meilleures ventes</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Exemple produit */}
+          <div className="border rounded p-4 text-center hover:shadow-lg">
+            <Image src="/images/watch1.jpg" alt="Montre Classique" width={300} height={300} className="mx-auto" />
+            <h3 className="mt-4 font-semibold">Montre Classique</h3>
+            <p className="mt-2 text-lg font-bold">25 000 F</p>
+            <Link href="/produit/1" className="mt-4 inline-block bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Voir le produit</Link>
+          </div>
+          <div className="border rounded p-4 text-center hover:shadow-lg">
+            <Image src="/images/lunettes1.jpg" alt="Lunettes Soleil" width={300} height={300} className="mx-auto" />
+            <h3 className="mt-4 font-semibold">Lunettes Soleil</h3>
+            <p className="mt-2 text-lg font-bold">15 000 F</p>
+            <Link href="/produit/2" className="mt-4 inline-block bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Voir le produit</Link>
+          </div>
+          <div className="border rounded p-4 text-center hover:shadow-lg">
+            <Image src="/images/casquette1.jpg" alt="Casquette Premium" width={300} height={300} className="mx-auto" />
+            <h3 className="mt-4 font-semibold">Casquette Premium</h3>
+            <p className="mt-2 text-lg font-bold">8 000 F</p>
+            <Link href="/produit/3" className="mt-4 inline-block bg-black text-white px-4 py-2 rounded hover:bg-gray-800">Voir le produit</Link>
+          </div>
+        </div>
+      </section>
+    </Layout>
+  )
+}
