@@ -1,0 +1,33 @@
+import Head from 'next/head'
+
+export default function Seo({ title, description, image, url }) {
+  const siteName = 'LABOLUX'
+  const metaTitle = title ? `${title} | ${siteName}` : siteName
+  const metaDesc = description || "LABOLUX — Montres, lunettes et accessoires de qualité au Sénégal."
+  const metaImage = image || '/images/og-default.jpg'
+  const metaUrl = url || 'https://labolux.vercel.app'
+
+  return (
+    <Head>
+      <title>{metaTitle}</title>
+      <meta name="description" content={metaDesc} />
+      <link rel="canonical" href={metaUrl} />
+
+      {/* Open Graph */}
+      <meta property="og:title" content={metaTitle} />
+      <meta property="og:description" content={metaDesc} />
+      <meta property="og:image" content={metaImage} />
+      <meta property="og:url" content={metaUrl} />
+      <meta property="og:type" content="website" />
+
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={metaTitle} />
+      <meta name="twitter:description" content={metaDesc} />
+      <meta name="twitter:image" content={metaImage} />
+
+      {/* Mobile */}
+      <meta name="viewport" content="width=device-width,initial-scale=1" />
+    </Head>
+  )
+}
