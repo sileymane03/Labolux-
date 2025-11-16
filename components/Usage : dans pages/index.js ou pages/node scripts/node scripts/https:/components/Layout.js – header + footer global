@@ -1,0 +1,42 @@
+import Link from 'next/link'
+
+export default function Layout({ children }) {
+  return (
+    <>
+      <header className="bg-black text-white p-4 flex justify-between items-center">
+        <Link href="/">
+          <h1 className="text-2xl font-bold">LABOLUX</h1>
+        </Link>
+        <nav>
+          <Link href="/" className="mx-2 hover:text-yellow-400">Accueil</Link>
+          <Link href="/boutique" className="mx-2 hover:text-yellow-400">Boutique</Link>
+          <Link href="/contact" className="mx-2 hover:text-yellow-400">Contact</Link>
+          <Link href="/a-propos" className="mx-2 hover:text-yellow-400">À propos</Link>
+          <Link href="/faq" className="mx-2 hover:text-yellow-400">FAQ</Link>
+        </nav>
+      </header>
+
+      <main>{children}</main>
+
+      <footer className="bg-gray-900 text-white p-6 mt-10">
+        <div className="flex flex-col md:flex-row justify-between">
+          <div>
+            <h2 className="font-bold text-lg">LABOLUX</h2>
+            <p>Montres • Lunettes • Accessoires téléphones</p>
+            <p>Dakar, Sénégal</p>
+            <p>📱 78 352 10 39 | 📧 laboluxshop@gmail.com</p>
+          </div>
+          <div className="mt-4 md:mt-0">
+            <h3 className="font-bold">Liens utiles</h3>
+            <ul>
+              <li><Link href="/cgv">CGV</Link></li>
+              <li><Link href="/politique">Politique de confidentialité</Link></li>
+              <li><Link href="/retour">Retour / Remboursement</Link></li>
+            </ul>
+          </div>
+        </div>
+        <p className="mt-4 text-center text-gray-400">© 2025 LABOLUX. Tous droits réservés.</p>
+      </footer>
+    </>
+  )
+}
